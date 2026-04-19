@@ -15,15 +15,12 @@ import io
 
 @st.cache_resource
 def get_db_engine():
-    # This only runs once!
     init_db() 
     return engine
 
-# Use this to trigger the connection
-active_engine = get_db_engine()
-
 # Initialize database
 try:
+    active_engine = get_db_engine()
     st.success("Database initialized successfully!")
 except Exception as e:
     st.error(f"Database connection error: {e}")
