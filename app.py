@@ -10,9 +10,21 @@ from datetime import datetime, date
 from fpdf import FPDF
 import io
 
+
+# app.py
+
+@st.cache_resource
+def get_db_engine():
+    # This only runs once!
+    init_db() 
+    return engine
+
+# Use this to trigger the connection
+active_engine = get_db_engine()
+
 # Initialize database
 try:
-    init_db()
+    st.success("Database initialized successfully!")
 except Exception as e:
     st.error(f"Database connection error: {e}")
     st.stop()
