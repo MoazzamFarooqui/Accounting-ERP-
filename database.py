@@ -1,12 +1,16 @@
 from sqlmodel import SQLModel, Field, create_engine as sql_create_engine, Session, select
 from typing import List
 import datetime as dt
+from dotenv import load_dotenv
+import os
 
 # --- Database Setup ---
 
+load_dotenv()
+
 def get_engine():
     # pool_pre_ping helps maintain connection with MariaDB on Arch
-    mysql_url = "mysql+mysqlconnector://root:moazzam123@localhost:3306/accounting_erp"
+    mysql_url = f"mysql+mysqlconnector://{os.getenv('SQL_USER')}:{os.getenv('SQL_PASSWORD')}@{os.getenv('SQL_HOST')}:{os.getenv('SQL_PORT')}/{os.getenv('SQL_DB')}"
     return sql_create_engine(mysql_url, echo=False, pool_pre_ping=True)
 
 engine = get_engine()
