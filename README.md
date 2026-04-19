@@ -26,9 +26,18 @@ A comprehensive Accounting Enterprise Resource Planning (ERP) system built with 
 ## Installation
 
 1. **Install uv** (if not already installed):
-   ```bash
-   curl -LsSf https://astral.sh/uv/install.sh | sh
-   ```
+   - On Linux/macOS:
+     ```bash
+     curl -LsSf https://astral.sh/uv/install.sh | sh
+     ```
+   - On Windows:
+     ```powershell
+     powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+     ```
+     Or using winget:
+     ```cmd
+     winget install astral-sh.uv
+     ```
 
 2. **Clone the repository:**
    ```bash
