@@ -203,7 +203,7 @@ if menu == "Dashboard":
         st.subheader("📄 Reports")
 
         with st.expander("⚙️ Financial Statement Settings"):
-            is_entity = st.text_input("Entity / Company Name", value="My Company")
+            is_entity = st.text_input("Entity / Company Name", value="DunixStore Inc.")
             is_period = st.text_input(
                 "Period End Date",
                 value=datetime.now().strftime("%b %d, %Y").upper()

@@ -81,7 +81,7 @@ def prepare_balance_sheet_data(df_accounts):
     }
 
 
-def generate_balance_sheet_pdf(df_accounts, entity_name="Company", as_of_date=None):
+def generate_balance_sheet_pdf(df_accounts, entity_name="DunixStore Inc.", as_of_date=None):
     if as_of_date is None:
         as_of_date = datetime.now().strftime("%b %d, %Y").upper()
 
