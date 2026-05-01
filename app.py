@@ -4,11 +4,12 @@ from sqlmodel import Session, select
 from database import (
     engine, Account, Customer, Vendor, JournalEntry, JournalItem,
     post_transaction, init_db, AccountType, Employee, Invoice,
-    Product, Tax, PaymentMethod
+    Product, Tax, PaymentMethod, reverse_transaction, recalculate_all_balances
 )
 from datetime import datetime, date
 from fpdf import FPDF
-from IncomeStatement import generate_income_statement_pdf, _compute_income_statement
+from IncomeStatement import generate_income_statement_pdf
+from BalanceSheet import generate_balance_sheet_pdf, prepare_balance_sheet_data
 
 
 @st.cache_resource
@@ -72,6 +73,32 @@ def pdf_bytes(pdf):
     return bytes(output)
 
 def generate_trial_balance_pdf(df_accounts):
+    """
+    Reads SUM(debit) and SUM(credit) per account directly from JournalItem.
+    This is the only correct way — Account.balance is unreliable for column splits.
+    Debit total MUST equal Credit total for balanced books.
+    """
+    with Session(engine) as session:
+        items = session.exec(select(JournalItem)).all()
+
+    if items:
+        ji_df = pd.DataFrame([{
+            "account_id": i.account_id,
+            "debit":      i.debit  or 0.0,
+            "credit":     i.credit or 0.0,
+        } for i in items])
+        ji_df = ji_df.groupby("account_id").agg(
+            total_debit  =("debit",  "sum"),
+            total_credit =("credit", "sum"),
+        ).reset_index()
+    else:
+        ji_df = pd.DataFrame(columns=["account_id", "total_debit", "total_credit"])
+
+    df = df_accounts.copy()
+    df = df.merge(ji_df, on="account_id", how="left")
+    df["total_debit"]  = df["total_debit"].fillna(0.0)
+    df["total_credit"] = df["total_credit"].fillna(0.0)
+
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", "B", 16)
@@ -89,23 +116,36 @@ def generate_trial_balance_pdf(df_accounts):
     pdf.cell(35, 10, "Credit ($)",   1, 1, "C", True)
 
     pdf.set_font("Arial", "", 10)
-    total_debit = total_credit = 0
-    for _, row in df_accounts.iterrows():
-        balance = row["balance"]
-        debit   = balance if balance > 0 else 0
-        credit  = abs(balance) if balance < 0 else 0
-        pdf.cell(30, 8, str(row["account_id"]), 1)
-        pdf.cell(60, 8, row["account_name"],    1)
-        pdf.cell(30, 8, row["type"],            1)
-        pdf.cell(35, 8, f"{debit:,.2f}",        1, 0, "R")
-        pdf.cell(35, 8, f"{credit:,.2f}",       1, 1, "R")
-        total_debit  += debit
-        total_credit += credit
+    grand_debit = grand_credit = 0.0
+
+    for _, row in df.iterrows():
+        d = float(row["total_debit"])
+        c = float(row["total_credit"])
+        pdf.cell(30, 8, str(row["account_id"]),   1)
+        pdf.cell(60, 8, str(row["account_name"]), 1)
+        pdf.cell(30, 8, str(row["type"]),         1)
+        pdf.cell(35, 8, f"{d:,.2f}",              1, 0, "R")
+        pdf.cell(35, 8, f"{c:,.2f}",              1, 1, "R")
+        grand_debit  += d
+        grand_credit += c
 
     pdf.set_font("Arial", "B", 10)
-    pdf.cell(120, 10, "TOTAL",                1, 0, "R", True)
-    pdf.cell(35,  10, f"{total_debit:,.2f}",  1, 0, "R", True)
-    pdf.cell(35,  10, f"{total_credit:,.2f}", 1, 1, "R", True)
+    pdf.set_fill_color(240, 240, 240)
+    pdf.cell(120, 10, "TOTAL",                 1, 0, "R", True)
+    pdf.cell(35,  10, f"{grand_debit:,.2f}",   1, 0, "R", True)
+    pdf.cell(35,  10, f"{grand_credit:,.2f}",  1, 1, "R", True)
+
+    pdf.ln(4)
+    pdf.set_font("Arial", "I", 9)
+    diff = abs(grand_debit - grand_credit)
+    if diff < 0.01:
+        pdf.set_text_color(0, 150, 0)
+        pdf.cell(0, 6, "  Balanced: Total Debit = Total Credit", 0, 1, "C")
+    else:
+        pdf.set_text_color(200, 0, 0)
+        pdf.cell(0, 6, f"  Out of balance by ${diff:,.2f} — check journal entries", 0, 1, "C")
+    pdf.set_text_color(0, 0, 0)
+
     return pdf_bytes(pdf)
 
 
@@ -129,12 +169,31 @@ if menu == "Dashboard":
     if accounts:
         df_accounts = pd.DataFrame([a.dict() for a in accounts])
         df_accounts["type"] = df_accounts["type_id"].map(type_map).fillna("Unknown")
+
+        # ── ALWAYS recompute balance from JournalItems — ignore stale DB values ──
+        with Session(engine) as _s:
+            _all_items = _s.exec(select(JournalItem)).all()
+        if _all_items:
+            _ji = pd.DataFrame([{
+                "account_id": i.account_id,
+                "debit":      i.debit  or 0.0,
+                "credit":     i.credit or 0.0
+            } for i in _all_items])
+            _ji = _ji.groupby("account_id").agg(
+                _d=("debit", "sum"), _c=("credit", "sum")
+            ).reset_index()
+            _ji["balance"] = _ji["_d"] - _ji["_c"]
+            df_accounts = df_accounts.drop(columns=["balance"]).merge(
+                _ji[["account_id", "balance"]], on="account_id", how="left"
+            )
+        df_accounts["balance"] = df_accounts["balance"].fillna(0.0)
+
         tu = df_accounts["type"].str.strip().str.upper()
 
         col1, col2, col3 = st.columns(3)
         col1.metric("Total Assets",      f"${df_accounts[tu == 'ASSET']['balance'].sum():,.2f}")
-        col2.metric("Total Liabilities", f"${df_accounts[tu == 'LIABILITY']['balance'].sum():,.2f}")
-        col3.metric("Total Equity",      f"${df_accounts[tu == 'EQUITY']['balance'].sum():,.2f}")
+        col2.metric("Total Liabilities", f"${abs(df_accounts[tu == 'LIABILITY']['balance'].sum()):,.2f}")
+        col3.metric("Total Equity",      f"${abs(df_accounts[tu == 'EQUITY']['balance'].sum()):,.2f}")
 
         st.subheader("Account Balances")
         st.dataframe(df_accounts[["account_id", "account_name", "type", "balance"]],
@@ -143,14 +202,13 @@ if menu == "Dashboard":
         st.divider()
         st.subheader("📄 Reports")
 
-        with st.expander("⚙️ Income Statement Settings"):
+        with st.expander("⚙️ Financial Statement Settings"):
             is_entity = st.text_input("Entity / Company Name", value="My Company")
             is_period = st.text_input(
                 "Period End Date",
                 value=datetime.now().strftime("%b %d, %Y").upper()
             )
-
-        col_tb, col_is = st.columns(2)
+        col_tb, col_is, col_bs = st.columns(3)
 
         with col_tb:
             try:
@@ -171,8 +229,7 @@ if menu == "Dashboard":
                     data=generate_income_statement_pdf(
                         df_accounts,
                         entity_name=is_entity,
-                        period_date=is_period,
-                        engine=engine          # ← pass engine so we read JournalItems
+                        period_date=is_period
                     ),
                     file_name="Income_Statement.pdf",
                     mime="application/pdf",
@@ -181,45 +238,137 @@ if menu == "Dashboard":
             except Exception as e:
                 st.error(f"Error generating Income Statement: {e}")
 
+        with col_bs:
+            try:
+                st.download_button(
+                    label="📄 Download Balance Sheet PDF",
+                    data=generate_balance_sheet_pdf(
+                        df_accounts,
+                        entity_name=is_entity,
+                        as_of_date=is_period
+                    ),
+                    file_name="Balance_Sheet.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
+            except Exception as e:
+                st.error(f"Error generating Balance Sheet: {e}")
+
         # ── Live Income Statement Preview ──────────────────────────────────
         st.divider()
         st.subheader("📊 Income Statement Preview")
 
-        try:
-            d = _compute_income_statement(df_accounts, engine)
+        REVENUE_TYPES      = {"REVENUE", "INCOME", "SALES", "SALE"}
+        OTHER_INC_TYPES    = {"OTHER INCOME", "NON-OPERATING INCOME",
+                              "INTEREST INCOME", "DIVIDEND INCOME", "GAIN"}
+        COGS_NAME_KEYWORDS = ("PURCHASE", "COST OF GOOD", "COGS", "INVENTORY COST",
+                              "DIRECT MATERIAL", "DIRECT LABOUR", "DIRECT LABOR",
+                              "FREIGHT IN", "CLOSING STOCK", "OPENING STOCK",
+                              "BEGINNING INVENTORY", "ENDING INVENTORY")
 
-            def fmt(val):
+        df = df_accounts.copy()
+        df["type_upper"] = df["type"].str.strip().str.upper()
+        df["name_upper"] = df["account_name"].str.strip().str.upper()
+
+        rev_df        = df[df["type_upper"].isin(REVENUE_TYPES)]
+        total_revenue = rev_df["balance"].abs().sum()
+
+        cogs_mask = (
+            df["type_upper"].isin({"COGS", "COST OF SALES", "COST OF GOODS", "PURCHASES"}) |
+            (df["name_upper"].apply(lambda n: any(k in n for k in COGS_NAME_KEYWORDS)) &
+             (df["type_upper"] == "EXPENSE"))
+        )
+        cogs_df  = df[cogs_mask]
+        cogs_ids = set(cogs_df.index)
+
+        opening   = abs(cogs_df[cogs_df["name_upper"].str.contains("OPENING|BEGINNING", na=False)]["balance"].sum())
+        purchases = abs(cogs_df[~cogs_df["name_upper"].str.contains("OPENING|BEGINNING|CLOSING|ENDING", na=False)]["balance"].sum())
+        closing   = abs(cogs_df[cogs_df["name_upper"].str.contains("CLOSING|ENDING", na=False)]["balance"].sum())
+        if closing == 0:
+            closing = abs(df[df["name_upper"].str.contains("INVENTORY|STOCK", na=False) &
+                             (df["type_upper"] == "ASSET")]["balance"].sum())
+
+        cogs_total   = max(0.0, (opening + purchases) - closing)
+        gross_profit = total_revenue - cogs_total
+
+        op_exp_df = df[(df["type_upper"] == "EXPENSE") & (~df.index.isin(cogs_ids))].copy()
+        op_exp_df["balance"] = op_exp_df["balance"].abs()
+        total_op_exp = op_exp_df["balance"].sum()
+        op_income    = gross_profit - total_op_exp
+
+        other_inc  = df[df["type_upper"].isin(OTHER_INC_TYPES)]["balance"].abs().sum()
+        net_income = op_income + other_inc
+
+        def fmt(val):
+            if round(val, 2) == 0: return "$0.00"
+            if val < 0: return f"-${abs(val):,.2f}"
+            return f"${val:,.2f}"
+
+        op_label  = "═══ Operating Profit ═══" if op_income  >= 0 else "═══ Operating Loss ═══"
+        net_label = "══ Net Profit ══"          if net_income >= 0 else "══ Net Loss ══"
+
+        preview = pd.DataFrame({
+            "Line Item": [
+                "Total Revenue",
+                "(-) Cost of Sales",
+                "═══ Gross Profit ═══",
+                "(-) Operating Expenses",
+                op_label,
+                "(+) Other Income",
+                net_label,
+            ],
+            "Amount": [
+                fmt(total_revenue),
+                f"-${cogs_total:,.2f}",
+                fmt(gross_profit),
+                f"-${total_op_exp:,.2f}",
+                fmt(abs(op_income)),
+                fmt(other_inc),
+                fmt(abs(net_income)),
+            ]
+        })
+        st.dataframe(preview, use_container_width=True, hide_index=True)
+
+        # ── Live Balance Sheet Preview ─────────────────────────────────────
+        st.divider()
+        st.subheader("📘 Balance Sheet Preview")
+
+        try:
+            bs_data = prepare_balance_sheet_data(df_accounts)
+
+            def fmt_bs(val):
                 if round(val, 2) == 0: return "$0.00"
-                if val < 0: return f"-${abs(val):,.2f}"
+                if val < 0: return f"(${abs(val):,.2f})"
                 return f"${val:,.2f}"
 
-            op_label  = "═══ Operating Profit ═══" if d["operating_income"] >= 0 else "═══ Operating Loss ═══"
-            net_label = "══ Net Profit ══"          if d["net_income"]       >= 0 else "══ Net Loss ══"
-
-            preview = pd.DataFrame({
+            bs_preview = pd.DataFrame({
                 "Line Item": [
-                    "Total Revenue",
-                    "(-) Cost of Sales",
-                    "═══ Gross Profit ═══",
-                    "(-) Operating Expenses",
-                    op_label,
-                    "(+) Other Income",
-                    net_label,
+                    "Total Assets",
+                    "Total Liabilities",
+                    "Equity (Capital Accounts)",
+                    "Current Year Earnings",
+                    "Total Equity",
+                    "Total Liabilities + Equity",
+                    "Difference",
                 ],
                 "Amount": [
-                    fmt(d["total_revenue"]),
-                    f"-${d['cost_of_sales']:,.2f}",
-                    fmt(d["gross_profit"]),
-                    f"-${d['total_op_expenses']:,.2f}",
-                    fmt(d["operating_income"]),
-                    fmt(d["total_other_income"]),
-                    fmt(d["net_income"]),
+                    fmt_bs(bs_data["total_assets"]),
+                    fmt_bs(bs_data["total_liabilities"]),
+                    fmt_bs(bs_data["base_equity_total"]),
+                    fmt_bs(bs_data["current_earnings"]),
+                    fmt_bs(bs_data["total_equity"]),
+                    fmt_bs(bs_data["liabilities_and_equity_total"]),
+                    fmt_bs(bs_data["difference"]),
                 ]
             })
-            st.dataframe(preview, use_container_width=True, hide_index=True)
+            st.dataframe(bs_preview, use_container_width=True, hide_index=True)
 
+            if abs(bs_data["difference"]) <= 0.01:
+                st.success("✓ Balance Sheet is balanced: Assets = Liabilities + Equity")
+            else:
+                st.warning(f"⚠ Out of balance by ${abs(bs_data['difference']):,.2f} — review journal entries.")
         except Exception as e:
-            st.error(f"Preview error: {e}")
+            st.error(f"Balance Sheet preview error: {e}")
 
     else:
         st.info("Start by adding Account Types and Accounts.")
@@ -632,16 +781,12 @@ elif menu == "Journal Entries":
                         format_func=lambda x: f"ID {x} - {next(e.description for e in entries if e.entry_id == x)}"
                     )
                     if st.form_submit_button("🗑️ Delete Journal Entry"):
-                        with Session(engine) as session:
-                            items = session.exec(
-                                select(JournalItem).where(JournalItem.entry_id == entry_to_del)
-                            ).all()
-                            for item in items:
-                                session.delete(item)
-                            session.commit()
-                        if delete_record(JournalEntry, "entry_id", entry_to_del):
-                            st.success("Journal Entry and its items deleted!")
+                        res = reverse_transaction(entry_to_del)
+                        if res == "Success":
+                            st.success("Journal Entry reversed and deleted!")
                             st.rerun()
+                        else:
+                            st.error(res)
 
 
 # ── General Ledger ────────────────────────────────────────────────────────────
