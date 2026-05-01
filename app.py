@@ -19,32 +19,112 @@ def get_db_engine():
 
 try:
     active_engine = get_db_engine()
-    st.success("Database initialized successfully!")
+    print("yiopeee")
 except Exception as e:
     st.error(f"Database connection error: {e}")
     st.stop()
 
-st.set_page_config(page_title="Accounting ERP", layout="wide", page_icon="📊")
+st.set_page_config(page_title="DunixStore ERP", layout="wide", page_icon="📊")
+
+st.markdown("""
+<style>
+:root {
+    color-scheme: light;
+    font-family: Inter, system-ui, sans-serif;
+}
+[data-testid="stAppViewContainer"] {
+    background: radial-gradient(circle at top left, rgba(59,130,246,0.14), transparent 18%),
+                radial-gradient(circle at 85% 10%, rgba(16,185,129,0.1), transparent 20%),
+                #f8fafc;
+}
+[data-testid="stSidebar"] {
+    background: #ffffff;
+    color: #0f172a;
+}
+[data-testid="stSidebar"] .css-1d391kg,
+[data-testid="stSidebar"] .css-1ihfar8 {
+    background: transparent;
+}
+.stApp .css-1nf9yta e {
+    color: #0f172a;
+}
+section[data-testid="stSidebar"] .css-1aot0al {
+    background: #ffffff;
+}
+.css-10trblm {
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(148,163,184,0.2);
+    border-radius: 24px;
+}
+.css-1aumxhk {
+    color: #0f172a;
+}
+button {
+    border-radius: 999px !important;
+}
+button[kind="primary"] {
+    background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%) !important;
+    color: #fff !important;
+    border: none !important;
+}
+button[kind="secondary"] {
+    border: 1px solid rgba(15,23,42,0.12) !important;
+    color: #0f172a !important;
+    background: rgba(255,255,255,0.9) !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+def render_page_header(title, subtitle, icon="📊"):
+    st.markdown(f"""
+    <div style='border-radius: 24px; padding: 28px; margin-bottom: 24px;
+                background: linear-gradient(135deg, rgba(56,189,248,0.12), rgba(236,253,245,0.95));
+                box-shadow: 0 20px 40px rgba(15,23,42,0.08);'>
+        <div style='display:flex; align-items:center; gap:16px;'>
+            <div style='font-size: 2.4rem; background: linear-gradient(135deg, #22d3ee, #2563eb);
+                        width: 72px; height: 72px; display:flex; align-items:center;
+                        justify-content:center; border-radius: 18px; color: #ffffff;'>
+                {icon}
+            </div>
+            <div>
+                <h1 style='margin:0; color:#0f172a; font-size:2.2rem;'>{title}</h1>
+                <p style='margin:6px 0 0; color:#475569; font-size:1rem;'>{subtitle}</p>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def render_card(title, value, subtitle=""):
+    st.markdown(f"""
+    <div style='border-radius: 20px; background: rgba(255,255,255,0.92);
+                border: 1px solid rgba(148,163,184,0.2); padding: 20px; min-height: 115px;'>
+        <div style='font-size: 0.85rem; color: #64748b; margin-bottom: 8px;'>{title}</div>
+        <div style='font-size: 1.8rem; font-weight: 700; color: #0f172a;'>{value}</div>
+        <div style='color: #64748b; margin-top: 6px; font-size: 0.95rem;'>
+            {subtitle}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.sidebar.markdown("""
-<div style="font-family: monospace; white-space: pre; line-height: 1.2; background-color: #0e1117; padding: 10px; border-radius: 5px; color: #ffffff;">
- █████╗ ███████╗██████╗ 
-██╔══██╗██╔════╝██╔══██╗
-███████║█████╗  ██████╔╝
-██╔══██║██╔══╝  ██╔══██╗
-██║  ██║███████╗██║  ██║
-╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-
- <b>ACCOUNTING ERP</b>
- <i>Driven by Precision</i>
+<div style="font-family: Inter, sans-serif; background-color: #ffffff; padding: 18px; border-radius: 18px; border: 1px solid rgba(15,23,42,0.08); color: #0f172a;">
+    <div style="font-size: 1.3rem; font-weight: 700; margin-bottom: 8px;">DunixStore ERP</div>
+    <div style="font-size: 0.92rem; color: #475569; line-height: 1.5;">
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
-menu = st.sidebar.selectbox("Go to", [
-    "Dashboard", "Chart of Accounts", "Employees", "Customers", "Vendors",
-    "Products & Services", "Taxes", "Payment Methods", "Invoices",
-    "Journal Entries", "General Ledger"
-])
+menu = st.sidebar.radio(
+    "Navigate",
+    [
+        "Dashboard", "Chart of Accounts", "Employees", "Customers", "Vendors",
+        "Products & Services", "Taxes", "Payment Methods", "Invoices",
+        "Journal Entries", "General Ledger"
+    ],
+    key="sidebar_menu"
+)
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -152,17 +232,13 @@ def generate_trial_balance_pdf(df_accounts):
 # ── Dashboard ─────────────────────────────────────────────────────────────────
 
 if menu == "Dashboard":
-    col_logo, col_title = st.columns([1, 6])
-    with col_logo:
-        try:
-            st.image("dashboard_logo.png", width=100)
-        except:
-            st.image("https://cdn-icons-png.flaticon.com/512/2620/2620601.png", width=100)
-    with col_title:
-        st.markdown("<h1 style='padding-top:20px;'>Accounting Financial Dashboard</h1>",
-                    unsafe_allow_html=True)
+    render_page_header(
+        title="Accounting Financial Dashboard",
+        subtitle="Monitor assets, liabilities, equity, and reports from a unified modern workspace.",
+        icon="📈"
+    )
 
-    accounts      = get_all(Account)
+    accounts = get_all(Account)
     account_types = get_all(AccountType)
     type_map      = {t.type_id: t.category_name for t in account_types}
 
@@ -190,10 +266,17 @@ if menu == "Dashboard":
 
         tu = df_accounts["type"].str.strip().str.upper()
 
+        asset_total = df_accounts[tu == 'ASSET']['balance'].sum()
+        liability_total = abs(df_accounts[tu == 'LIABILITY']['balance'].sum())
+        equity_total = abs(df_accounts[tu == 'EQUITY']['balance'].sum())
+
         col1, col2, col3 = st.columns(3)
-        col1.metric("Total Assets",      f"${df_accounts[tu == 'ASSET']['balance'].sum():,.2f}")
-        col2.metric("Total Liabilities", f"${abs(df_accounts[tu == 'LIABILITY']['balance'].sum()):,.2f}")
-        col3.metric("Total Equity",      f"${abs(df_accounts[tu == 'EQUITY']['balance'].sum()):,.2f}")
+        with col1:
+            render_card("Total Assets", f"${asset_total:,.2f}", "Computed from ledger balances")
+        with col2:
+            render_card("Total Liabilities", f"${liability_total:,.2f}", "Includes all liability accounts")
+        with col3:
+            render_card("Total Equity", f"${equity_total:,.2f}", "Equity accounts and retained earnings")
 
         st.subheader("Account Balances")
         st.dataframe(df_accounts[["account_id", "account_name", "type", "balance"]],
@@ -377,7 +460,11 @@ if menu == "Dashboard":
 # ── Chart of Accounts ─────────────────────────────────────────────────────────
 
 elif menu == "Chart of Accounts":
-    st.title("📂 Chart of Accounts")
+    render_page_header(
+        title="Chart of Accounts",
+        subtitle="Create and manage account types, codes, and balances with better visibility.",
+        icon="📂"
+    )
 
     with st.expander("⚙️ Manage Account Types"):
         types = get_all(AccountType)
@@ -446,7 +533,11 @@ elif menu == "Chart of Accounts":
 # ── Employees ─────────────────────────────────────────────────────────────────
 
 elif menu == "Employees":
-    st.title("👨‍💼 Employee Management")
+    render_page_header(
+        title="Employee Management",
+        subtitle="Track your team, roles, and hiring information in one place.",
+        icon="👨‍💼"
+    )
     employees = get_all(Employee)
     if employees:
         st.dataframe(pd.DataFrame([e.dict() for e in employees]), use_container_width=True)
@@ -482,7 +573,11 @@ elif menu == "Employees":
 # ── Customers ─────────────────────────────────────────────────────────────────
 
 elif menu == "Customers":
-    st.title("👥 Customer Management")
+    render_page_header(
+        title="Customer Management",
+        subtitle="Manage customer records, communication details, and invoicing relationships.",
+        icon="👥"
+    )
     customers = get_all(Customer)
     if customers:
         st.dataframe(pd.DataFrame([c.dict() for c in customers]), use_container_width=True)
@@ -517,7 +612,11 @@ elif menu == "Customers":
 # ── Vendors ───────────────────────────────────────────────────────────────────
 
 elif menu == "Vendors":
-    st.title("🏭 Vendor Management")
+    render_page_header(
+        title="Vendor Management",
+        subtitle="Organize supplier information, tax IDs, and vendor contacts efficiently.",
+        icon="🏭"
+    )
     vendors = get_all(Vendor)
     if vendors:
         st.dataframe(pd.DataFrame([v.dict() for v in vendors]), use_container_width=True)
@@ -552,7 +651,11 @@ elif menu == "Vendors":
 # ── Products & Services ───────────────────────────────────────────────────────
 
 elif menu == "Products & Services":
-    st.title("📦 Products & Services")
+    render_page_header(
+        title="Products & Services",
+        subtitle="Manage inventory, services, and pricing with a clean product catalog.",
+        icon="📦"
+    )
     products = get_all(Product)
     if products:
         st.dataframe(pd.DataFrame([p.dict() for p in products]), use_container_width=True)
@@ -587,7 +690,11 @@ elif menu == "Products & Services":
 # ── Taxes ─────────────────────────────────────────────────────────────────────
 
 elif menu == "Taxes":
-    st.title("⚖️ Tax Configuration")
+    render_page_header(
+        title="Tax Configuration",
+        subtitle="Configure VAT, sales tax, and other rates for invoices and journal entries.",
+        icon="⚖️"
+    )
     taxes = get_all(Tax)
     if taxes:
         st.dataframe(pd.DataFrame([t.dict() for t in taxes]), use_container_width=True)
@@ -621,7 +728,11 @@ elif menu == "Taxes":
 # ── Payment Methods ───────────────────────────────────────────────────────────
 
 elif menu == "Payment Methods":
-    st.title("💳 Payment Methods")
+    render_page_header(
+        title="Payment Methods",
+        subtitle="Add and maintain payment options like cash, cards, and bank transfers.",
+        icon="💳"
+    )
     methods = get_all(PaymentMethod)
     if methods:
         st.dataframe(pd.DataFrame([m.dict() for m in methods]), use_container_width=True)
@@ -654,7 +765,11 @@ elif menu == "Payment Methods":
 # ── Invoices ──────────────────────────────────────────────────────────────────
 
 elif menu == "Invoices":
-    st.title("🧾 Invoices")
+    render_page_header(
+        title="Invoices",
+        subtitle="Create and review invoices with customer and employee assignment.",
+        icon="🧾"
+    )
     invoices  = get_all(Invoice)
     customers = get_all(Customer)
     employees = get_all(Employee)
@@ -703,7 +818,11 @@ elif menu == "Invoices":
 # ── Journal Entries ───────────────────────────────────────────────────────────
 
 elif menu == "Journal Entries":
-    st.title("✍️ Journal Entry (Double Entry)")
+    render_page_header(
+        title="Journal Entries",
+        subtitle="Build double-entry transactions with line items, invoices, vendors, and payment links.",
+        icon="✍️"
+    )
 
     accounts  = get_all(Account)
     employees = get_all(Employee)
@@ -792,7 +911,11 @@ elif menu == "Journal Entries":
 # ── General Ledger ────────────────────────────────────────────────────────────
 
 elif menu == "General Ledger":
-    st.title("📖 General Ledger")
+    render_page_header(
+        title="General Ledger",
+        subtitle="Review journal item history, account flows, and ledger detail in one view.",
+        icon="📖"
+    )
     with Session(engine) as session:
         statement = (
             select(JournalItem, Account.account_name,
