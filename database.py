@@ -180,3 +180,71 @@ def post_transaction(description: str, ledger_lines: List[dict], employee_id: in
         except Exception as e:
             session.rollback()
             return f"Error: {str(e)}"
+
+
+def reverse_transaction(entry_id: int):
+    """Reverse a journal entry and update account balances accordingly."""
+    with Session(engine) as session:
+        try:
+            # Get all items for the entry
+            items = session.exec(
+                select(JournalItem).where(JournalItem.entry_id == entry_id)
+            ).all()
+
+            if not items:
+                return "Error: No items found for this entry"
+
+            # Reverse each item's effect on account balances
+            for item in items:
+                acc = session.get(Account, item.account_id)
+                if acc:
+                    acc_type = session.get(AccountType, acc.type_id)
+                    # Reverse the original balance change
+                    if acc_type and acc_type.category_name in ["Asset", "Expense"]:
+                        acc.balance -= (item.debit - item.credit)
+                    else:
+                        acc.balance -= (item.credit - item.debit)
+
+            # Delete the journal items
+            for item in items:
+                session.delete(item)
+
+            # Delete the journal entry itself
+            entry = session.get(JournalEntry, entry_id)
+            if entry:
+                session.delete(entry)
+
+            session.commit()
+            return "Success"
+        except Exception as e:
+            session.rollback()
+            return f"Error: {str(e)}"
+
+
+def recalculate_all_balances():
+    """Recalculate all account balances by re-summing all journal entries."""
+    with Session(engine) as session:
+        try:
+            # Reset all account balances to 0 first
+            accounts = session.exec(select(Account)).all()
+            for acc in accounts:
+                acc.balance = 0.0
+
+            # Get all journal items
+            all_items = session.exec(select(JournalItem)).all()
+
+            # Re-apply each journal item to update balances
+            for item in all_items:
+                acc = session.get(Account, item.account_id)
+                if acc:
+                    acc_type = session.get(AccountType, acc.type_id)
+                    if acc_type and acc_type.category_name in ["Asset", "Expense"]:
+                        acc.balance += (item.debit - item.credit)
+                    else:
+                        acc.balance += (item.credit - item.debit)
+
+            session.commit()
+            return "Success"
+        except Exception as e:
+            session.rollback()
+            return f"Error: {str(e)}"
