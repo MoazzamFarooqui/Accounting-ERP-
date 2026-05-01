@@ -45,7 +45,7 @@ def generate_income_statement_pdf(df_accounts, entity_name="Company", period_dat
     # ── REVENUE ────────────────────────────────────────────────────────────
     REVENUE_TYPES = {"REVENUE", "INCOME", "SALES", "SALE"}
     revenue_df = df[df["type_upper"].isin(REVENUE_TYPES)].copy()
-    total_revenue = revenue_df["balance"].sum()
+    total_revenue = abs(revenue_df["balance"].sum())
 
     # ── COGS detection ─────────────────────────────────────────────────────
     COGS_TYPE_KEYWORDS = {"COGS", "COST OF SALES", "COST OF GOODS", "PURCHASES"}
@@ -97,7 +97,7 @@ def generate_income_statement_pdf(df_accounts, entity_name="Company", period_dat
     OTHER_INCOME_TYPES = {"OTHER INCOME", "NON-OPERATING INCOME",
                           "INTEREST INCOME", "DIVIDEND INCOME", "GAIN"}
     other_income_df    = df[df["type_upper"].isin(OTHER_INCOME_TYPES)].copy()
-    total_other_income = other_income_df["balance"].sum()
+    total_other_income = abs(other_income_df["balance"].sum())
 
     net_income = operating_income + total_other_income
 
@@ -188,9 +188,9 @@ def generate_income_statement_pdf(df_accounts, entity_name="Company", period_dat
         row("  (No revenue accounts found)", c1="-")
     else:
         for _, r in revenue_df.iterrows():
-            row(f"  {r['account_name']}", c1=money(r["balance"]))
+            row(f"  {r['account_name']}", c1=money(abs(r["balance"])))
     divider()
-    section_total("Total Revenue", total_revenue, is_cost=False)
+    section_total("Total Revenue", abs(total_revenue), is_cost=False)
     pdf.ln(3)
 
     # ── COST OF SALES ────────────────────────────────────────────────────────
@@ -232,9 +232,9 @@ def generate_income_statement_pdf(df_accounts, entity_name="Company", period_dat
     if not other_income_df.empty or total_other_income != 0:
         row("OTHER INCOME", bold=True, underline=True)
         for _, r in other_income_df.iterrows():
-            row(f"  {r['account_name']}", c2=money(r["balance"]))
+            row(f"  {r['account_name']}", c2=money(abs(r["balance"])))
         divider()
-        section_total("Total Other Income", total_other_income, is_cost=False)
+        section_total("Total Other Income", abs(total_other_income), is_cost=False)
         pdf.ln(3)
 
     # ── NET PROFIT / NET LOSS ────────────────────────────────────────────────
@@ -257,12 +257,12 @@ def generate_income_statement_pdf(df_accounts, entity_name="Company", period_dat
 
     pdf.set_fill_color(245, 245, 245)
     summary_items = [
-        ("Total Revenue",       money(total_revenue)),
+        ("Total Revenue",       money(abs(total_revenue))),
         ("Cost of Sales",       cost(cost_of_sales)),
         (gross_summary_label,   money(abs(gross_profit))),
         ("Operating Expenses",  cost(total_op_expenses)),
         (op_summary_label,      money(abs(operating_income))),
-        ("Other Income",        money(total_other_income)),
+        ("Other Income",        money(abs(total_other_income))),
         (net_summary_label,     money(abs(net_income))),
     ]
     box_w   = PAGE_W * 0.5
