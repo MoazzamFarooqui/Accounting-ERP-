@@ -24,7 +24,7 @@ except Exception as e:
     st.error(f"Database connection error: {e}")
     st.stop()
 
-st.set_page_config(page_title="DunixStore ERP", layout="wide", page_icon="📊")
+st.set_page_config(page_title="DunixStore ERP", layout="wide")
 
 st.markdown("""
 <style>
@@ -76,7 +76,7 @@ button[kind="secondary"] {
 """, unsafe_allow_html=True)
 
 
-def render_page_header(title, subtitle, icon="📊"):
+def render_page_header(title, subtitle, icon=""):
     st.markdown(f"""
     <div style='border-radius: 24px; padding: 28px; margin-bottom: 24px;
                 background: linear-gradient(135deg, rgba(56,189,248,0.12), rgba(236,253,245,0.95));
@@ -339,7 +339,7 @@ if menu == "Dashboard":
 
         # ── Live Income Statement Preview ──────────────────────────────────
         st.divider()
-        st.subheader("📊 Income Statement Preview")
+        st.subheader("💲 Income Statement Preview")
 
         REVENUE_TYPES      = {"REVENUE", "INCOME", "SALES", "SALE"}
         OTHER_INC_TYPES    = {"OTHER INCOME", "NON-OPERATING INCOME",
