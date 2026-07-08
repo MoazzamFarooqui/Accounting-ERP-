@@ -167,6 +167,13 @@ accounting-erp/
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+---
+
+## Created By
+
+[![MoazzamFarooqui](https://img.shields.io/badge/MoazzamFarooqui-181717?style=for-the-badge&logo=github)](https://github.com/MoazzamFarooqui)
+[![DanyalAbbas](https://img.shields.io/badge/DanyalAbbas-181717?style=for-the-badge&logo=github)](https://github.com/DanyalAbbas)
+
 ## Support
 
 For issues or questions, please open an issue on the GitHub repository.
