@@ -42,7 +42,7 @@ A comprehensive Accounting Enterprise Resource Planning (ERP) system built with 
 2. **Clone the repository:**
    ```bash
    git clone <repository-url>
-   cd accounting-erp
+   cd Accounting-ERP
    ```
 
 3. **Install dependencies and create virtual environment:**
