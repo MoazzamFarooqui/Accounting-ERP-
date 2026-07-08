@@ -169,12 +169,23 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-## Created By
-
-[![MoazzamFarooqui](https://img.shields.io/badge/MoazzamFarooqui-181717?style=for-the-badge&logo=github)](https://github.com/MoazzamFarooqui)
-[![DanyalAbbas](https://img.shields.io/badge/DanyalAbbas-181717?style=for-the-badge&logo=github)](https://github.com/DanyalAbbas)
-
 ## Support
 
 For issues or questions, please open an issue on the GitHub repository.
+
+---
+
+## Created By
+
+<p align="center">
+  <a href="https://github.com/MoazzamFarooqui">
+    <img src="https://img.shields.io/badge/MoazzamFarooqui-181717?style=for-the-badge&logo=github" alt="MoazzamFarooqui" />
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://github.com/DanyalAbbas">
+    <img src="https://img.shields.io/badge/DanyalAbbas-181717?style=for-the-badge&logo=github" alt="DanyalAbbas" />
+  </a>
+</p>
+```
+
 
