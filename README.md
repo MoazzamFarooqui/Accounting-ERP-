@@ -186,6 +186,4 @@ For issues or questions, please open an issue on the GitHub repository.
     <img src="https://img.shields.io/badge/DanyalAbbas-181717?style=for-the-badge&logo=github" alt="DanyalAbbas" />
   </a>
 </p>
-```
-
 
