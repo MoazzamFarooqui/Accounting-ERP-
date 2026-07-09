@@ -2,180 +2,310 @@
 
 A comprehensive Accounting Enterprise Resource Planning (ERP) system built with Python, Streamlit, and MySQL/MariaDB. This application provides a complete double-entry bookkeeping solution with automated invoicing, dynamic reporting, and a user-friendly web interface.
 
-## Features
+---
 
-- **Double-Entry Journal System**: Maintain accurate financial records with balanced debit and credit entries
-- **Chart of Accounts**: Manage account types (Asset, Liability, Equity, Revenue, Expense) and individual accounts
-- **Customer & Vendor Management**: Track clients and suppliers with contact information
-- **Employee Management**: Maintain employee records with roles and departments
-- **Product & Services Catalog**: Manage inventory items and pricing
-- **Tax Management**: Configure tax rates and apply them to transactions
-- **Payment Methods**: Define available payment options
-- **Invoice Generation**: Create and manage customer invoices
-- **Journal Entries**: Record manual accounting transactions
-- **General Ledger**: View detailed transaction history
-- **Financial Dashboard**: Real-time metrics for assets, liabilities, and equity
-- **Trial Balance Reports**: Generate and download PDF reports of account balances
+## Badges
 
-## Prerequisites
+![Python](https://img.shields.io/badge/Python-3.13+-3776AB?style=for-the-badge\&logo=python\&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge\&logo=streamlit\&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge\&logo=mysql\&logoColor=white)
+![SQLModel](https://img.shields.io/badge/SQLModel-ORM-success?style=for-the-badge)
+![ERP](https://img.shields.io/badge/Project-Accounting%20ERP-blue?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen?style=for-the-badge)
 
-- Python 3.13 or higher
-- MySQL or MariaDB server
-- uv (fast Python package installer)
+---
 
-## Installation
+## Table of Contents
 
-1. **Install uv** (if not already installed):
-   - On Linux/macOS:
-     ```bash
-     curl -LsSf https://astral.sh/uv/install.sh | sh
-     ```
-   - On Windows:
-     ```powershell
-     powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-     ```
-     Or using winget:
-     ```cmd
-     winget install astral-sh.uv
-     ```
+* [Project Overview](#project-overview)
+* [Features](#features)
+* [Prerequisites](#prerequisites)
+* [Installation](#installation)
+* [Database Setup](#database-setup)
+* [Running the Application](#running-the-application)
+* [Usage Guide](#usage-guide)
+* [Screenshots](#screenshots)
+* [Technologies Used](#technologies-used)
+* [Contributing](#contributing)
+* [License](#license)
+* [Support](#support)
+* [Created By](#created-by)
 
-2. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   cd Accounting-ERP
-   ```
+---
 
-3. **Install dependencies and create virtual environment:**
-   ```bash
-   uv sync
-   ```
+# Project Overview
 
-   This will automatically create a virtual environment and install all required packages.
+Managing financial records manually can be time-consuming and prone to errors. An Accounting ERP system simplifies this process by organizing financial data, automating transactions, and generating accurate reports.
 
-## Database Setup
+This project is a complete Accounting ERP System built with Python, Streamlit, and MySQL/MariaDB. It implements a double-entry bookkeeping system with modules for customers, vendors, employees, products, invoices, journal entries, the general ledger, and financial reporting through an interactive web application.
 
-1. **Start your MySQL/MariaDB server** and ensure it's running.
+---
 
-2. **Create the database and tables:**
-   - Open your MySQL/MariaDB client (e.g., `mysql -u root -p`)
-   - Run the SQL script:
-     ```sql
-     SOURCE accounting.sql;
-     ```
-   - Alternatively, you can run the script from the command line:
-     ```bash
-     mysql -u root -p < accounting.sql
-     ```
+# Features
 
-3. **Configure database connection (optional):**
-   - If your database credentials differ from the defaults, edit `database.py` and update the `mysql_url` variable:
-     ```python
-     mysql_url = "mysql+mysqlconnector://username:password@localhost:3306/accounting_erp"
-     ```
+* Double-Entry Journal System
+* Chart of Accounts Management
+* Customer & Vendor Management
+* Employee Management
+* Product & Services Catalog
+* Tax Management
+* Payment Methods
+* Invoice Generation
+* Journal Entries
+* General Ledger
+* Financial Dashboard
+* Trial Balance PDF Reports
 
-## Running the Application
+---
 
-**Start the Streamlit app:**
+# Prerequisites
+
+* Python 3.13 or higher
+* MySQL or MariaDB Server
+* uv (Fast Python Package Installer)
+
+---
+
+# Installation
+
+### Install uv (if not already installed)
+
+**Linux/macOS**
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Windows PowerShell**
+
+```powershell
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+**Windows (Winget)**
+
+```cmd
+winget install astral-sh.uv
+```
+
+### Clone the repository
+
+```bash
+git clone <repository-url>
+```
+
+### Navigate to the project directory
+
+```bash
+cd Accounting-ERP
+```
+
+### Install dependencies
+
+```bash
+uv sync
+```
+
+---
+
+# Database Setup
+
+1. Start your MySQL/MariaDB server.
+
+2. Create the database using:
+
+```sql
+SOURCE accounting.sql;
+```
+
+or
+
+```bash
+mysql -u root -p < accounting.sql
+```
+
+3. If required, update the database connection in `database.py`.
+
+---
+
+# Running the Application
+
+Start the Streamlit application:
+
 ```bash
 uv run streamlit run app.py
 ```
 
-**Access the application:**
-- Open your web browser and go to `http://localhost:8501`
-- The app will automatically initialize the database connection
+Open your browser and visit:
 
-## Usage Guide
+```text
+http://localhost:8501
+```
+
+---
+
+# Usage Guide
 
 ### Dashboard
-- View real-time financial metrics (Total Assets, Liabilities, Equity)
-- See account balances in a table format
-- Download Trial Balance PDF reports
+
+* View financial metrics
+* Monitor account balances
+* Download Trial Balance PDF reports
 
 ### Chart of Accounts
-- **Manage Account Types:** Add categories like Asset, Liability, Equity, Revenue, Expense
-- **Add Accounts:** Create new accounts with names, codes, and assign types
-- **View Balances:** See current account balances
+
+* Manage account types
+* Create new accounts
+* View account balances
 
 ### Employees
-- Add employee records with name, role, department, and hire date
-- View and manage employee information
+
+* Add and manage employee records
 
 ### Customers
-- Add customer details including name, email, and phone
-- Manage client database
+
+* Add and manage customer information
 
 ### Vendors
-- Add vendor/supplier information with company name, contact, and tax ID
-- Track business partners
+
+* Manage supplier records
 
 ### Products & Services
-- Create product catalog with names, unit prices, and categories
-- Manage inventory items
+
+* Create and manage products and services
 
 ### Taxes
-- Define tax rates and names (e.g., Sales Tax 8.5%)
-- Apply taxes to transactions
+
+* Configure tax rates
 
 ### Payment Methods
-- Configure payment options (Cash, Credit Card, Bank Transfer, etc.)
+
+* Manage available payment options
 
 ### Invoices
-- Generate customer invoices
-- Link invoices to customers and employees
-- Track invoice status and totals
+
+* Generate and manage customer invoices
 
 ### Journal Entries
-- Record manual accounting transactions
-- Ensure double-entry balance (debits = credits)
-- Link entries to employees, invoices, vendors, or payment methods
+
+* Record balanced accounting transactions
 
 ### General Ledger
-- View detailed transaction history
-- Filter and analyze journal entries
 
-## Project Structure
-
-```
-accounting-erp/
-├── accounting.sql          # Database schema and initial data
-├── app.py                  # Main Streamlit application
-├── database.py             # Database models and connection logic
-├── main.py                 # Simple entry point (not used in production)
-├── pyproject.toml          # Project configuration and dependencies
-├── README.md               # This file
-└── __pycache__/            # Python bytecode cache
-```
-
-## Technologies Used
-
-- **Python 3.13+**: Core programming language
-- **Streamlit**: Web application framework
-- **SQLModel**: ORM for database operations (built on SQLAlchemy)
-- **MySQL Connector/Python**: Database driver
-- **FPDF**: PDF generation for reports
-- **Pandas**: Data manipulation and analysis
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+* View complete transaction history
 
 ---
 
-## Support
+# Screenshots
 
-For issues or questions, please open an issue on the GitHub repository.
+### Dashboard
+
+<p align="center">
+  <img src="YOUR_DASHBOARD_IMAGE" alt="Dashboard" width="900"/>
+</p>
 
 ---
 
-## Created By
+### Chart of Accounts
+
+<p align="center">
+  <img src="YOUR_CHART_OF_ACCOUNTS_IMAGE" alt="Chart of Accounts" width="900"/>
+</p>
+
+---
+
+### Customer Management
+
+<p align="center">
+  <img src="YOUR_CUSTOMER_IMAGE" alt="Customer Management" width="900"/>
+</p>
+
+---
+
+### Vendor Management
+
+<p align="center">
+  <img src="YOUR_VENDOR_IMAGE" alt="Vendor Management" width="900"/>
+</p>
+
+---
+
+### Product & Services
+
+<p align="center">
+  <img src="YOUR_PRODUCT_IMAGE" alt="Products & Services" width="900"/>
+</p>
+
+---
+
+### Invoice Management
+
+<p align="center">
+  <img src="YOUR_INVOICE_IMAGE" alt="Invoice Management" width="900"/>
+</p>
+
+---
+
+### Journal Entries
+
+<p align="center">
+  <img src="YOUR_JOURNAL_IMAGE" alt="Journal Entries" width="900"/>
+</p>
+
+---
+
+### General Ledger
+
+<p align="center">
+  <img src="YOUR_LEDGER_IMAGE" alt="General Ledger" width="900"/>
+</p>
+
+---
+
+### Trial Balance Report
+
+<p align="center">
+  <img src="YOUR_TRIAL_BALANCE_IMAGE" alt="Trial Balance Report" width="900"/>
+</p>
+
+---
+
+# Technologies Used
+
+* Python
+* Streamlit
+* SQLModel
+* MySQL / MariaDB
+* SQLAlchemy
+* MySQL Connector/Python
+* FPDF
+* Pandas
+
+---
+
+# Contributing
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Make your changes.
+4. Test the application.
+5. Submit a Pull Request.
+
+---
+
+# License
+
+This project is licensed under the MIT License.
+
+---
+
+# Support
+
+If you encounter any issues or have suggestions, feel free to open an issue in this repository.
+
+---
+
+# Created By
 
 <p align="center">
   <a href="https://github.com/MoazzamFarooqui">
@@ -186,4 +316,3 @@ For issues or questions, please open an issue on the GitHub repository.
     <img src="https://img.shields.io/badge/DanyalAbbas-181717?style=for-the-badge&logo=github" alt="DanyalAbbas" />
   </a>
 </p>
-
