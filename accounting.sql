@@ -1,4 +1,3 @@
--- Create Database 
 CREATE DATABASE IF NOT EXISTS accounting_erp; 
 USE accounting_erp; 
 
