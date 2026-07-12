@@ -228,7 +228,7 @@ http://localhost:8501
 
 ---
 
-## Vendors Management
+## Vendor Management
 
 <img width="1547" height="435" alt="image" src="https://github.com/user-attachments/assets/85c5a2a4-f214-4cf0-8099-d4f38dc174d8" />
 
