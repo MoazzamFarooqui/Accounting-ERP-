@@ -198,111 +198,33 @@ http://localhost:8501
 
 # Screenshots
 
-## Dashboard
+<img width="1548" height="607" alt="image" src="https://github.com/user-attachments/assets/2d38cdbc-e876-4b9a-ab7d-01a0151f3bfd" />
 
-<img width="595" height="268" alt="image" src="https://github.com/user-attachments/assets/e1763761-6caa-46d5-9519-6fae68a6a5b8" />
+<img width="1522" height="222" alt="image" src="https://github.com/user-attachments/assets/a5f4f9c6-3973-4b91-a106-e886164adb98" />
 
-### Generation of PDF files of Trial Balance, Income Statement and Balance Sheet:
+<img width="1515" height="353" alt="image" src="https://github.com/user-attachments/assets/a2b2f694-3f23-4467-9cf4-27ead9e0de21" />
 
-<img width="598" height="262" alt="image" src="https://github.com/user-attachments/assets/627b5422-b4cc-484f-9e8a-c245c1fe01ef" />
+<img width="1535" height="430" alt="image" src="https://github.com/user-attachments/assets/f3427699-95ad-40eb-b5af-191dac826d43" />
 
-<img width="595" height="188" alt="image" src="https://github.com/user-attachments/assets/0e515868-4aa3-4270-b1fd-77841a9ee501" />
+<img width="1538" height="507" alt="image" src="https://github.com/user-attachments/assets/ef3740ac-2057-4b59-98e8-750c03f6b8df" />
 
----
+<img width="1547" height="431" alt="image" src="https://github.com/user-attachments/assets/c4bfa896-0eb4-40b1-bf9b-7bfce71165ca" />
 
-## Chart of Accounts
+<img width="1552" height="418" alt="image" src="https://github.com/user-attachments/assets/4c6f945e-4a5a-4d31-b400-a26085baecb1" />
 
-<img width="599" height="261" alt="image" src="https://github.com/user-attachments/assets/7d1ce193-bdc3-4845-8be5-bdd44c704897" />
+<img width="1547" height="435" alt="image" src="https://github.com/user-attachments/assets/85c5a2a4-f214-4cf0-8099-d4f38dc174d8" />
 
-### Features of Adding and Deleting the Account
+<img width="1548" height="412" alt="image" src="https://github.com/user-attachments/assets/ea89e307-a8f5-4aba-8d41-be379bd93647" />
 
-<img width="594" height="212" alt="image" src="https://github.com/user-attachments/assets/a55ce534-c6f9-4e70-93da-5ca88a439f24" />
+<img width="1530" height="407" alt="image" src="https://github.com/user-attachments/assets/fce65f6a-c07a-42cc-a66c-c801a417baff" />
 
----
+<img width="1536" height="472" alt="image" src="https://github.com/user-attachments/assets/0d77099b-426a-4c86-a8bb-8808be0262c2" />
 
-## Employees
+<img width="1535" height="397" alt="image" src="https://github.com/user-attachments/assets/a17450d9-8b43-47f8-92e1-309b4420c848" />
 
-<img width="587" height="163" alt="image" src="https://github.com/user-attachments/assets/50e87e20-7885-4710-a321-effd62f1dfda" />
+<img width="1537" height="837" alt="image" src="https://github.com/user-attachments/assets/eb327b84-2a4a-45d5-8dae-8b03ca506dce" />
 
-### Features of Adding and Deleting Employees
-
-<img width="601" height="171" alt="image" src="https://github.com/user-attachments/assets/2db52e6e-83fc-470e-81bc-9c2e0ef05b82" />
-
----
-
-## Customers 
-
-<img width="596" height="156" alt="image" src="https://github.com/user-attachments/assets/09620dfb-1678-4a00-b5ce-4ab0ca7a9bda" />
-
-### Features of Adding and Deleting Customers
-
-<img width="602" height="170" alt="image" src="https://github.com/user-attachments/assets/28264b33-77be-4807-ac7d-cffc9f315274" />
-
----
-
-## Vendors
-
-<img width="600" height="175" alt="image" src="https://github.com/user-attachments/assets/e19581f6-304b-4716-8224-af1de1308ae6" />
-
-### Features of Adding and Deleting Vendors
-
-<img width="599" height="171" alt="image" src="https://github.com/user-attachments/assets/8d532217-e662-4792-8dc8-6150d24433b7" />
-
----
-
-## Product & Services
-
-<img width="601" height="141" alt="image" src="https://github.com/user-attachments/assets/a0fc54dd-384d-4edb-92ba-26cc2609987a" />
-
-### Features of Adding a New Product
-
-<img width="600" height="312" alt="image" src="https://github.com/user-attachments/assets/82713792-f9f3-47ae-8685-a27ddcd22971" />
-
----
-
-## Taxes
-
-<img width="595" height="149" alt="image" src="https://github.com/user-attachments/assets/65e10f77-392a-4192-aef3-f3c4e0a1aa3c" />
-
-### Feature of Adding the Tax name & Percentage
-
-<img width="601" height="270" alt="image" src="https://github.com/user-attachments/assets/6885594b-b9dd-4ce3-9c09-a4aa92f3a5b8" />
-
----
-
-## Payment Methods
-
-<img width="599" height="197" alt="image" src="https://github.com/user-attachments/assets/53a3cdb6-9f3c-4a8f-a3f1-f9023a5af36f" />
-
-### Features of Adding and Deleting Payment Methods
-
-<img width="607" height="107" alt="image" src="https://github.com/user-attachments/assets/c7ccef7a-0aef-4ffe-a193-d18571b01b99" />
-
----
-
-## Invoices
-
-<img width="607" height="124" alt="image" src="https://github.com/user-attachments/assets/9a5a93a2-91b6-4bd5-8da1-502fa23a8bf9" />
-
-### Features of Creating Invoices
-
-<img width="602" height="453" alt="image" src="https://github.com/user-attachments/assets/af2a8451-8a28-4e30-b0cf-0be496903d8e" />
-
----
-
-## Journal Entries
-
-<img width="597" height="289" alt="image" src="https://github.com/user-attachments/assets/b91b12b5-657f-417f-a9a2-cfadfe3abe84" />
-
-### Feature of Deleting the Journal Entry
-
-<img width="605" height="121" alt="image" src="https://github.com/user-attachments/assets/7dd64c26-a292-4e40-bd39-53bebde52f55" />
-
----
-
-## General Ledger
-
-<img width="601" height="173" alt="image" src="https://github.com/user-attachments/assets/11ee21ec-26aa-488e-92f1-aadf464374c0" />
+<img width="1547" height="327" alt="image" src="https://github.com/user-attachments/assets/ee1977ba-d876-4c78-a81d-22d69b8f9638" />
 
 ---
 
