@@ -202,15 +202,9 @@ http://localhost:8501
 
 <img width="1548" height="607" alt="image" src="https://github.com/user-attachments/assets/2d38cdbc-e876-4b9a-ab7d-01a0151f3bfd" />
 
----
-
 <img width="1522" height="222" alt="image" src="https://github.com/user-attachments/assets/a5f4f9c6-3973-4b91-a106-e886164adb98" />
 
----
-
 <img width="1515" height="353" alt="image" src="https://github.com/user-attachments/assets/a2b2f694-3f23-4467-9cf4-27ead9e0de21" />
-
----
 
 <img width="1535" height="430" alt="image" src="https://github.com/user-attachments/assets/f3427699-95ad-40eb-b5af-191dac826d43" />
 
