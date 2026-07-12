@@ -315,4 +315,4 @@ If you encounter any issues or have suggestions, feel free to open an issue in t
   <a href="https://github.com/DanyalAbbas">
     <img src="https://img.shields.io/badge/DanyalAbbas-181717?style=for-the-badge&logo=github" alt="DanyalAbbas" />
   </a>
-</p> i want proper headings in screenshot section
+</p> 
